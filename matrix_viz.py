@@ -11,32 +11,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
 st.markdown("""
 <style>
-    /* Fonturi și Reset */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-
     html, body, [class*="css"]  {
         font-family: 'Inter', sans-serif;
     }
-
-    /* Carduri (Containere cu umbră) */
-    .st-card {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: 1px solid #e0e0e0;
-        margin-bottom: 20px;
-    }
-
-    /* Titluri colorate */
     h1 { color: #111827; font-weight: 800; letter-spacing: -1px;}
     h2 { color: #374151; font-weight: 600; }
     h3 { color: #4b5563; font-size: 1.1rem !important; }
-
-    /* Butoane personalizate */
     div.stButton > button {
         border-radius: 8px;
         font-weight: 600;
@@ -48,14 +31,10 @@ st.markdown("""
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-
-    /* Metric Value Size */
     div[data-testid="stMetricValue"] {
         font-size: 1.4rem;
         color: #2563eb;
     }
-
-    /* Highlight LaTeX */
     .katex { font-size: 1.2em; color: #1e3a8a; }
 </style>
 """, unsafe_allow_html=True)
@@ -69,12 +48,10 @@ def standard_mult_bench(A, B):
                 C[i][j] += A[i][k] * B[k][j]
     return C
 
-
 def split(matrix):
     row, col = matrix.shape
     row2, col2 = row // 2, col // 2
     return matrix[:row2, :col2], matrix[:row2, col2:], matrix[row2:, :col2], matrix[row2:, col2:]
-
 
 def block_mult_bench(A, B):
     n = len(A)
@@ -86,7 +63,6 @@ def block_mult_bench(A, B):
     C21 = block_mult_bench(A21, B11) + block_mult_bench(A22, B21)
     C22 = block_mult_bench(A21, B12) + block_mult_bench(A22, B22)
     return np.vstack((np.hstack((C11, C12)), np.hstack((C21, C22))))
-
 
 def strassen_mult_bench(A, B):
     n = len(A)
@@ -106,7 +82,6 @@ def strassen_mult_bench(A, B):
     c22 = m1 - m2 + m3 + m6
     return np.vstack((np.hstack((c11, c12)), np.hstack((c21, c22))))
 
-
 class Frame:
     def __init__(self, C, hl_A, hl_B, hl_C, desc, math):
         self.C = C.copy()
@@ -115,7 +90,6 @@ class Frame:
         self.hl_C = hl_C
         self.desc = desc
         self.math = math
-
 
 @st.cache_data
 def generate_frames_cached(algo_type, A, B):
@@ -183,13 +157,12 @@ def generate_frames_cached(algo_type, A, B):
 
     return frames
 
-
 def plot_styled(A, B, fr):
     plt.rcParams.update({'figure.max_open_warning': 0})
     fig, axes = plt.subplots(1, 3, figsize=(14, 5), facecolor='none')
     fig.subplots_adjust(wspace=0.1)
 
-    cmaps = ['Purples', 'Oranges', 'GnBu']  # A=Mov, B=Portocaliu, C=Verde Albăstrui
+    cmaps = ['Purples', 'Oranges', 'GnBu']
     titles = ["Matricea A", "Matricea B", "Rezultat C"]
     matrices = [A, B, fr.C]
     highlights = [fr.hl_A, fr.hl_B, fr.hl_C]
@@ -197,12 +170,9 @@ def plot_styled(A, B, fr):
     for i, ax in enumerate(axes):
         mat = matrices[i]
         hl = highlights[i]
-
         im = ax.imshow(mat, cmap=cmaps[i], vmin=0, vmax=np.max(mat) + 1, alpha=0.8)
-
         ax.set_xticks([])
         ax.set_yticks([])
-
         ax.set_title(titles[i], fontsize=14, pad=10, fontweight='bold', color='#374151')
 
         rows, cols = mat.shape
@@ -217,19 +187,13 @@ def plot_styled(A, B, fr):
                 if hl:
                     rs, re, cs, ce = hl
                     if rs <= r < re and cs <= c < ce: active = True
-
                 val_str = f"{int(mat[r, c])}"
-
                 if active:
-                    rect = plt.Rectangle((c - 0.45, r - 0.45), 0.9, 0.9, fill=False, edgecolor='#ef4444', lw=2.5,
-                                         zorder=10)
+                    rect = plt.Rectangle((c - 0.45, r - 0.45), 0.9, 0.9, fill=False, edgecolor='#ef4444', lw=2.5, zorder=10)
                     ax.add_patch(rect)
-                    ax.text(c, r, val_str, ha='center', va='center', color='black', fontweight='bold', fontsize=14,
-                            zorder=11)
+                    ax.text(c, r, val_str, ha='center', va='center', color='black', fontweight='bold', fontsize=14, zorder=11)
                 else:
-                    # Text normal
                     ax.text(c, r, val_str, ha='center', va='center', color='#4b5563', fontsize=11)
-
     return fig
 
 with st.sidebar:
@@ -249,8 +213,7 @@ with st.sidebar:
 
     current_N = st.session_state.viz_data[0].shape[0]
     if size_sel != current_N:
-        st.session_state.viz_data = (
-        np.random.randint(1, 6, (size_sel, size_sel)), np.random.randint(1, 6, (size_sel, size_sel)))
+        st.session_state.viz_data = (np.random.randint(1, 6, (size_sel, size_sel)), np.random.randint(1, 6, (size_sel, size_sel)))
         st.session_state.step_idx = 0
         st.session_state.viz_running = False
         st.rerun()
@@ -281,23 +244,16 @@ with tab_viz:
     col_main, col_info = st.columns([3, 1])
 
     with col_main:
-        st.markdown('<div class="st-card">', unsafe_allow_html=True)
-
         curr_frame = frames[min(st.session_state.step_idx, len(frames) - 1)]
-
         fig = plot_styled(A_viz, B_viz, curr_frame)
         st.pyplot(fig, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
         st.latex(curr_frame.math)
 
     with col_info:
-        st.markdown('<div class="st-card">', unsafe_allow_html=True)
         st.metric("Pasul Curent", f"{st.session_state.step_idx + 1} / {len(frames)}")
         st.markdown("---")
-        st.markdown(f"**Acțiune:**\n\n{curr_frame.desc}")
+        st.info(f"**Acțiune:**\n\n{curr_frame.desc}")
         st.progress(min((st.session_state.step_idx + 1) / len(frames), 1.0))
-        st.markdown('</div>', unsafe_allow_html=True)
 
         with st.expander("ℹ️ Detalii Teoretice", expanded=True):
             if algo_sel == "Standard":
@@ -327,53 +283,43 @@ with tab_bench:
     col_b_input, col_b_res = st.columns([1, 2])
 
     with col_b_input:
-        st.markdown('<div class="st-card">', unsafe_allow_html=True)
         bench_n = st.selectbox("Mărime Matrice (N)", [32, 64, 128, 256, 512], index=2)
         run_bench = st.button("🔥 Rulează Benchmark", use_container_width=True, type="primary")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     if run_bench:
         with col_b_res:
             with st.spinner(f"Calculăm pentru matrici {bench_n}x{bench_n}..."):
-                # Pregătire date
                 A_b = np.random.rand(bench_n, bench_n)
                 B_b = np.random.rand(bench_n, bench_n)
                 res = []
 
-                # 1. Numpy
                 t0 = time.time()
                 np.dot(A_b, B_b)
-                t_np = time.time() - t0
+                t_np = max(time.time() - t0, 0.000001)
                 res.append({"Algo": "Numpy (Optimizat)", "Timp (s)": t_np, "Color": "#10b981"})
 
-                # 2. Standard
                 if bench_n > 64:
                     res.append({"Algo": "Standard (Python)", "Timp (s)": 0, "Color": "#ef4444"})
                     skip_std = True
                 else:
                     t0 = time.time()
                     standard_mult_bench(A_b, B_b)
-                    t_std = time.time() - t0
+                    t_std = max(time.time() - t0, 0.000001)
                     res.append({"Algo": "Standard (Python)", "Timp (s)": t_std, "Color": "#ef4444"})
                     skip_std = False
 
-                # 3. Block
                 try:
                     t0 = time.time()
                     block_mult_bench(A_b, B_b)
-                    t_blk = time.time() - t0
+                    t_blk = max(time.time() - t0, 0.000001)
                     res.append({"Algo": "Block (Recursiv)", "Timp (s)": t_blk, "Color": "#f59e0b"})
                 except:
                     pass
 
-                # Afișare
                 df = pd.DataFrame(res)
                 valid_df = df[df["Timp (s)"] > 0].sort_values("Timp (s)")
 
-                # Grafic Custom
                 st.bar_chart(valid_df, x="Algo", y="Timp (s)", color="Color")
-
-                # Metrics Table
                 st.table(df[["Algo", "Timp (s)"]])
 
                 if not skip_std and t_std > 0:
