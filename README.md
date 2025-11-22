@@ -1,6 +1,6 @@
 # 🧮 Matrix Algo Viz - Vizualizare Algoritmi Matrici
 
-[![Streamlit App](https://matrice-vizualizare.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://matrice-vizualizare.streamlit.app/)
 
 O aplicație interactivă și educațională construită cu **Python** și **Streamlit** pentru a vizualiza și compara performanța algoritmilor fundamentali de înmulțire a matricelor.
 
